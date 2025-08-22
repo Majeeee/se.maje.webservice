@@ -1,2 +1,5 @@
+# only activate after the first commit(git init)
 node_modules/
 .env
+.gitignore
+dist/
