@@ -2,6 +2,7 @@ import express from "express"
 import "dotenv/config"
 import { closeDB, runDB } from "./db/database.js"
 
+
 const app = express()
 const port: number = Number(process.env.PORT) || 3000 // Could crash
 
