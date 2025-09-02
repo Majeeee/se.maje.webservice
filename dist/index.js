@@ -9,6 +9,23 @@ const port = Number(process.env.PORT) || 3000; // Could crash
 app.get("/", (req, res) => {
     res.status(200).send("Hello world!");
 });
+app.post("/users", async (req, res) => {
+    try {
+        const newUser = {
+            name: req.body.name,
+            email: req.body.email,
+            age: req.body.age,
+        };
+        // Här kan du spara i DB om du vill:
+        // const db = getDB();
+        // await db.collection("users").insertOne(newUser);
+        res.status(201).send(newUser);
+    }
+    catch (err) {
+        res.status(500).json({ error: "Kunde inte skapa användare", details: err });
+    }
+});
+// GET /users/:id – hämta användare via ObjectId
 app.get("/users/:id", async (req, res) => {
     try {
         const db = getDB();
