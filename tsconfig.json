@@ -25,8 +25,9 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true  // ✅ viktigt för import/export
   },
-  "include": ["src"],
+  "include": ["src"/*, "env.d.ts"*/],
   "exclude": ["node_modules", "dist"]
 }

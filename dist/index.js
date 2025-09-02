@@ -1,15 +1,42 @@
 import express from "express";
 import "dotenv/config";
-import { closeDB, runDB } from "./db/database.js";
+import { closeDB, runDB, getDB } from "./db/database.js";
+import { ObjectId } from "mongodb";
 const app = express();
+app.use(express.json()); //läsa JSON från req.body
 const port = Number(process.env.PORT) || 3000; // Could crash
+// Root endpoint
 app.get("/", (req, res) => {
     res.status(200).send("Hello world!");
 });
-// Start Server on Port Variable
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
+app.get("/users/:id", async (req, res) => {
+    try {
+        const db = getDB();
+        const userId = req.params.id;
+        // Kontrollera att id finns
+        if (!userId) {
+            return res.status(400).json({ error: "ID saknas i URL" });
+        }
+        // Kontrollera att id är ett giltigt ObjectId
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({ error: "Ogiltigt ID" });
+        }
+        const user = await db
+            .collection("users")
+            .findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            return res.status(404).json({ error: "Användare hittades inte" });
+        }
+        res.json(user);
+    }
+    catch (err) {
+        res.status(500).json({ error: "DB-fel", details: err });
+    }
 });
+// Start Server on Port Variable
+/*app.listen(port, () => {
+  console.log(`Listening on port ${port}`)
+})*/
 // Server startup async function - goes here
 async function startServer() {
     try {
