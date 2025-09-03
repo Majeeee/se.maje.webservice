@@ -1,4 +1,4 @@
-package se.maje.webservice.WebService_Uppgifter_Lektion_3;
+package se.maje.webservice.webservice_uppgifter_lektion_3;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
