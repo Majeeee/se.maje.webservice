@@ -21,19 +21,19 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    // GET /users → Hämta alla användare
+    // GET /users  Hämta alla användare
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // POST /users → Skapa en ny användare
+    // POST /users  Skapa en ny användare
     @PostMapping
     public User createUser(@RequestBody User user) {
         return userRepository.save(user);
     }
 
-    // DELETE /users/{id} → Ta bort användare
+    // DELETE /users/{id} Ta bort användare
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -43,5 +43,43 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build(); // 404 Not Found
         }
+    }
+
+
+    // Update /users/{id} → updatera användare  uppgift 6
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateUser(
+            @PathVariable Long id,
+            @RequestBody User updatedUser) {
+
+        // Hämta användare från databasen
+        Optional<User> existingUserOpt = userRepository.findById(id);
+
+        if (existingUserOpt.isEmpty()) {
+            return ResponseEntity.status(404)
+                    .body("Användare med ID " + id + " finns inte.");
+        }
+
+        User existingUser = existingUserOpt.get();
+
+        // Validera att användarnamn och lösenord finns i request
+        if (updatedUser.getUsername() == null || updatedUser.getUsername().isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body("Användarnamn måste anges.");
+        }
+        if (updatedUser.getPassword() == null || updatedUser.getPassword().isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body("Lösenord måste anges.");
+        }
+
+        // Uppdatera fälten
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setPassword(updatedUser.getPassword());
+        existingUser.setEnabled(updatedUser.isEnabled());
+
+        // Spara tillbaka i databasen
+        userRepository.save(existingUser);
+
+        return ResponseEntity.ok("Användare med ID " + id + " uppdaterad.");
     }
 }
